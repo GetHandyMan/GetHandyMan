@@ -7,7 +7,7 @@ Final project, B.Sc. Computer Science, Afeka College of Engineering (2026–2027
 | | |
 |---|---|
 | **Supervisor** | Dr. Yair Even-Zohar |
-| **Team** | Idan Lachovitz · [Teammate Name] |
+| **Team** | Idan Lachovitz · Idan Pekler |
 | **Status** | Phase 1: definition & research |
 
 ---
