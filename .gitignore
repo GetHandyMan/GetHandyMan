@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Node
+node_modules/
+
+# Media & data (too large for git)
+*.mp4
+*.mkv
+*.webm
+*.wav
+*.mp3
+data/raw/
+data/cache/
+
+# Models / indexes
+models/
+*.faiss
+qdrant_storage/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
