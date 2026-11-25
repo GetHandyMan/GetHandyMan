@@ -4,7 +4,8 @@ Record of meetings with the project supervisor, Dr. Yair Even-Zohar.
 
 | # | Date | Format | Topics | Summary |
 |---|------|--------|--------|---------|
-| 1 | TBD | Zoom / in person | Project definition, literature & competitors review | — |
+| 0 | Nov 2026 | — | Initial idea (in-video search, "VortexAI") | Supervisor did not approve the idea; team switched to GetHandyMan |
+| 1 | TBD | Zoom / in person | Project definition, literature & competitors review, project analysis | — |
 
 ---
 

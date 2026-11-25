@@ -1,98 +1,99 @@
-# VortexAI — Literature Review
+# GetHandyMan — Literature Review
 
 **Version:** 0.1 (draft) — November 2026
 
-This review covers the research areas VortexAI builds on: (1) content-based indexing of lecture video, (2) automatic speech recognition, including Hebrew, (3) vision–language models for visual search, (4) semantic text retrieval, (5) natural-language moment retrieval in video, (6) multimodal lecture datasets, and (7) fusion of rankings from multiple sources. We close with the research gap our project addresses.
+GetHandyMan rests on six research areas: (1) information asymmetry and credence goods, (2) bidding for incomplete contracts, (3) mechanism design, (4) reputation systems in online platforms, (5) Empirical Bayes estimation, and (6) disintermediation ("leakage") in two-sided marketplaces. We also briefly cover (7) the use of AI models for diagnosis and why we keep them out of pricing. We close with the research gap the project addresses.
 
 ---
 
-## 1. Content-Based Lecture Video Indexing
+## 1. Information Asymmetry and Credence Goods
 
-The most directly related line of work is by Yang and Meinel at the Hasso Plattner Institute. In *Content Based Lecture Video Retrieval Using Speech and Video Text Information* (IEEE Transactions on Learning Technologies, 2014) [1], they propose a pipeline that segments lecture video, detects key frames, applies **video OCR** to the key frames and **ASR** to the audio track, and then extracts keywords at the video and segment level to support content-based browsing and search. Earlier work by the same group [2][3] focused on video OCR for lecture indexing, motivated by the observation that text displayed in a lecture video is closely tied to the lecture content and is therefore a valuable indexing source. They also extracted timed lecture outlines from the geometry of detected text lines.
+**Akerlof (1970)** [1] showed in *The Market for "Lemons"* that when sellers know more about quality than buyers, markets can unravel: buyers cannot tell good from bad, so they are unwilling to pay for quality.
 
-**Relevance to VortexAI.** This work validates the core idea that *speech + on-screen text* is a strong combination for lecture search. However, it pre-dates modern neural models: ASR accuracy was a recognised bottleneck at the time, retrieval was keyword-based, and there was no visual search beyond text. VortexAI revisits the same pipeline with current models (Whisper-class ASR, neural OCR, vision–language embeddings, dense retrieval) and adds visual-content search and learned/rank-based fusion.
+Home repairs are a sharper case: **credence goods**. Darby and Karni (1973) added this category to Nelson's classification of search and experience goods, with repair services as a typical example [2]. **Dulleck and Kerschbamer (2006)** [2] survey the field in *On Doctors, Mechanics, and Computer Specialists*. They open with the worry we all have when the heating or the washing machine breaks down: paying for a service that was not provided, or receiving unnecessary treatment. They ask under which conditions experts have an incentive to exploit the informational problem, what types of fraud exist (overtreatment, undertreatment, overcharging), and which institutions can deal with it.
 
-## 2. Automatic Speech Recognition
+Field evidence confirms that the fraud is real and systematic. **Balafoutas, Beck, Kerschbamer and Sutter (2013)** [3] ran a natural field experiment on taxi rides in Athens. Passengers who appeared to have worse information about routes were taken on significantly longer detours, and lack of information about the tariff system raised the likelihood of a manipulated bill by about fifteen percentage points.
 
-### 2.1 Whisper
-Radford et al., *Robust Speech Recognition via Large-Scale Weak Supervision* (2022, ICML 2023) [4], introduced **Whisper**, trained on 680,000 hours of weakly supervised, multilingual, multitask audio. The models generalise well to standard benchmarks without dataset-specific fine-tuning, and the code and weights are open-source. Whisper outputs time-aligned segments, which is exactly what in-video search needs.
+**Relevance.** "Bait-and-switch" in home repair is exactly *overcharging* in a credence-goods market. Our scenario tree and change-of-scope protocol are institutional tools of the kind this literature discusses. They make the expert's diagnosis verifiable (documented photos, AI cross-check) and commit prices in advance.
 
-### 2.2 Hebrew ASR
-Hebrew is a lower-resource language with rich morphology, and stock multilingual models perform noticeably worse on it than on English. Marmor et al., *Building an Accurate Open-Source Hebrew ASR System through Crowdsourcing* (Interspeech 2025) [5], built a 314-hour crowd-transcribed Hebrew dataset (ivrit.ai) and trained a Whisper-based Hebrew model that reduced error rates by up to 29% compared with existing Whisper solutions. They also released a dedicated Hebrew evaluation set and a public Hebrew ASR leaderboard.
+## 2. Bidding for Incomplete Contracts
 
-**Relevance.** We will use Whisper (or the faster-whisper implementation) for English and evaluate ivrit.ai's Hebrew-tuned Whisper models for Hebrew lectures. Measuring WER on our own Hebrew lecture recordings is part of our evaluation.
+**Bajari, Houghton and Tadelis (2014)** [4] studied highway-paving procurement. Contracts are awarded to the lowest bidder, but the plans and specifications are often changed after the award, so the final cost differs from the low bid. Using a structural model, they show that **adaptation costs account for 7.5–14% of the winning bid**, and that bidders respond strategically to the expected incompleteness. Markups from private information and market power, the usual focus of auction theory, are much smaller by comparison.
 
-## 3. Vision–Language Models for Visual Search
+**Relevance.** This is the most direct academic analogue of our problem: a lowest-bid auction plus post-award renegotiation creates room for strategic bidding. Our contribution is to (a) make the contract *less incomplete* through the scenario tree, and (b) price in each bidder's historical tendency to renegotiate through the overrun factor.
 
-Radford et al., *Learning Transferable Visual Models From Natural Language Supervision* (CLIP, ICML 2021) [6], trained paired image and text encoders on 400 million (image, text) pairs with a contrastive objective. After pre-training, natural-language text can be used to refer to visual concepts **zero-shot**, without task-specific labels. This is the enabling technology for queries such as "a whiteboard with a graph drawn on it" or "a person holding a guitar": we embed key frames with the image encoder, embed the query with the text encoder, and retrieve by cosine similarity.
+## 3. Mechanism Design
 
-**Relevance.** CLIP-style models (and successors such as SigLIP and multilingual variants) cover the "what was shown" modality. A known limitation is that CLIP is weak at reading dense text in images, which is why we keep OCR as a separate modality for slides and code.
+Mechanism design asks how to set the rules of a game so that self-interested participants' best response produces the desired outcome. Classic results include **Myerson (1981)** [5] on optimal auction design. In procurement, **Che (1993)** [6] analysed *scoring auctions*, in which bids are evaluated on a score combining price and other attributes instead of price alone.
 
-## 4. Semantic Text Retrieval
+**Relevance.** Ranking by *quote × overrun factor* is a scoring rule. It turns the auction into one in which the score reflects the *expected final* price, not the announced price. The design aim is incentive compatibility: lowballing should not increase a professional's expected payoff. We will test this property empirically in the simulator rather than prove it in full generality.
 
-Reimers and Gurevych, *Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks* (EMNLP 2019) [7], showed how to fine-tune BERT with siamese/triplet structures so that sentences map to fixed-size embeddings comparable by cosine similarity, making large-scale semantic search practical. Their example is striking: finding the most similar pair among 10,000 sentences drops from about 65 hours with a cross-encoder BERT to about 5 seconds with SBERT.
+## 4. Reputation Systems in Online Platforms
 
-**Relevance.** Transcript segments and OCR text will be embedded with a multilingual sentence-embedding model so that a query like "how do we solve recurrences" can match a segment where the lecturer says "let's use the Master Theorem", even with no shared keywords. We will combine this with lexical BM25 matching, which remains strong for exact terms, names, and code identifiers.
+**Resnick, Kuwabara, Zeckhauser and Friedman (2000)** [7] described how reputation systems let strangers trust each other online, and identified their weak points: few ratings, unfair or missing feedback, and the cold-start problem for newcomers. **Dellarocas (2003)** [8] analysed online feedback mechanisms as a form of digitised word of mouth and discussed their design and strategic manipulation. **Tadelis (2016)** [9] reviews feedback systems in online platform markets and notes that ratings tend to be inflated and are often uninformative.
 
-## 5. Natural-Language Moment Retrieval
+**Relevance.** Star ratings measure *satisfaction*, which a customer may give even after being overcharged. Our overrun factor is an **objective, behaviour-based** reputation signal (final price vs. quote) that the platform measures directly. That makes it harder to inflate.
 
-A body of computer-vision research studies retrieving a *moment* (a time span) inside a video from a natural-language query:
+## 5. Empirical Bayes Estimation
 
-- **TVR** — Lei et al., *TVR: A Large-Scale Dataset for Video-Subtitle Moment Retrieval* (ECCV 2020) [8]. TVR requires models to use **both** the video and its subtitle (dialogue) text. It contains about 109K queries over 21.8K videos from six TV shows, each with a tight temporal window, and introduces the Cross-modal Moment Localization (XML) network with late fusion of the two modalities.
-- **QVHighlights / Moment-DETR** — Lei, Berg and Bansal, *Detecting Moments and Highlights in Videos via Natural Language Queries* (NeurIPS 2021) [9]. The dataset has over 10,000 YouTube videos, each annotated with a free-form query, the relevant moments, and per-clip saliency scores. Moment-DETR treats moment localisation as a direct set-prediction problem with a transformer encoder–decoder. Weakly supervised pre-training on ASR captions substantially improved it.
+**Efron and Morris (1975)** [10] showed how the James–Stein estimator, viewed in an empirical-Bayes context, improves on raw averages when estimating many related quantities. Their famous example predicts baseball batting averages: each player's early-season average is "shrunk" toward the overall mean, and the shrunken estimates predict the rest of the season much better than the raw averages.
 
-**Relevance.** These works establish the task formulation, the evaluation metrics (recall at IoU thresholds, mAP), and the finding that combining visual and spoken/subtitle information helps. They are trained on TV and vlog content, not lectures, and are end-to-end models that are heavy to train. VortexAI takes a modular retrieval approach (index per modality, then fuse), which is more practical for a student project and easier to analyse with ablations. We may use QVHighlights as a secondary benchmark for the general-video domain.
+**Relevance.** Estimating each professional's overrun factor is the same problem. A new professional with one job that ran ×2.0 should not be treated as a ×2.0 professional. Empirical Bayes shrinks their estimate toward the category average and moves it away only as evidence accumulates. The prior (mean and variance across professionals) is itself estimated from the platform's data, which is the "empirical" part. This directly addresses the cold-start weakness of reputation systems noted in §4.
 
-## 6. Multimodal Lecture Datasets
+## 6. Disintermediation ("Leakage") in Two-Sided Marketplaces
 
-Lee et al., *Lecture Presentations Multimodal Dataset: Towards Understanding Multimodality in Educational Videos* (ICCV 2023; earlier arXiv version 2022) [10], released the **LPM** dataset: aligned slides and spoken language for 180+ hours of video and 9,000+ slides from 10 lecturers in several subjects (e.g. computer science, dentistry, biology). Its pipeline includes OCR extraction, ASR alignment, and cross-modal retrieval between slides and speech.
+**Gu and Zhu (2021)** [11] ran a randomised controlled trial on an online freelance marketplace. They found that enhanced trust increases the likelihood of high-quality freelancers being hired. However, once trust is high enough, it also increases disintermediation: clients and freelancers go around the platform to avoid its fees, which offsets the revenue gains.
 
-**Relevance.** LPM is the closest public benchmark to our primary domain. It is a candidate source of English evaluation data, and its slide–speech alignment idea maps directly onto our "speech + screen text" fusion.
+**Relevance.** Leakage is one of the reasons cited for Homejoy's failure (see the competitors review). Our design reduces the incentive to leak in three ways: commission only on completed jobs, a cap of ₪150 per job, and value the platform keeps adding on repeat jobs (the customer protection and change-of-scope arbitration apply only on-platform).
 
-## 7. Rank Fusion
+## 7. AI Models for Diagnosis — and Why They Do Not Set Prices
 
-When several retrieval systems each return a ranked list, their scores are usually not comparable (cosine similarity vs. BM25 score vs. OCR confidence). Cormack, Clarke and Büttcher, *Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods* (SIGIR 2009) [11], proposed **Reciprocal Rank Fusion (RRF)**, a simple unsupervised method: each document's fused score is the sum over systems of 1 / (k + rank). RRF consistently beat the individual systems and standard fusion methods such as Condorcet Fuse and CombMNZ on TREC data.
+Modern vision–language models can describe a photo and classify a fault zero-shot, and a growing number of consumer apps already estimate repair costs from a photo (see the competitors review). However, large language models are known to **hallucinate**: they produce fluent but unsupported content, including invented numbers. Ji et al. (2023) [12] survey the phenomenon.
 
-**Relevance.** RRF is our baseline for combining speech, OCR and visual results. Our planned contribution is to compare it with modality-aware weighting, e.g. boosting a moment when speech and screen text agree within the same time window.
+**Relevance.** This motivates our strict separation:
+- The **AI** outputs only a *structured diagnosis* (category, fault type, confidence), plus follow-up questions when confidence is low. This output can be checked against labels.
+- The **pricing engine** computes ranges from a price table and real job data. It is deterministic, auditable and updatable.
 
 ---
 
 ## 8. Summary and Research Gap
 
-| Area | Representative work | What we take | What is missing for our use case |
-|------|---------------------|--------------|----------------------------------|
-| Lecture indexing | Yang & Meinel [1–3] | Speech + OCR pipeline for lectures | Pre-neural models; keyword-only; no visual search |
-| ASR | Whisper [4], ivrit.ai [5] | Robust time-aligned transcription; Hebrew models | Integration into a search system; Hebrew lecture evaluation |
-| Visual search | CLIP [6] | Zero-shot text-to-frame retrieval | Weak on dense on-screen text |
-| Text retrieval | SBERT [7], BM25 | Semantic + lexical matching | Not video-aware by itself |
-| Moment retrieval | TVR [8], QVHighlights [9] | Task framing, metrics, multimodal benefit | TV/vlog domain; heavy end-to-end models |
-| Lecture datasets | LPM [10] | Benchmark data, slide–speech alignment | English only |
-| Fusion | RRF [11] | Simple, strong baseline | No temporal or modality awareness |
+| Area | Key work | What we take | What is missing |
+|------|----------|--------------|-----------------|
+| Credence goods | Akerlof [1]; Dulleck & Kerschbamer [2]; Balafoutas et al. [3] | Theory and evidence that experts overcharge under information asymmetry | Concrete, deployable mechanisms in a consumer repair app |
+| Incomplete contracts | Bajari, Houghton & Tadelis [4] | Low bids + renegotiation create strategic bidding | Applied to highway procurement, not to consumer services |
+| Mechanism design | Myerson [5]; Che [6] | Scoring rules can change bidder incentives | No scoring rule based on *historical renegotiation behaviour* |
+| Reputation | Resnick et al. [7]; Dellarocas [8]; Tadelis [9] | Reputation enables trust; known weaknesses | Ratings measure satisfaction, not price honesty |
+| Empirical Bayes | Efron & Morris [10] | Shrinkage for small-sample estimates | Not applied to pricing reliability of service providers |
+| Disintermediation | Gu & Zhu [11] | Trust can increase leakage | Need for a fee design that keeps transactions on-platform |
+| AI diagnosis | Ji et al. [12] | LLMs hallucinate numbers | Separation of AI diagnosis from pricing in a marketplace |
 
-**The gap.** No single open work combines (a) modern neural ASR, OCR and vision–language retrieval in one practical in-video search system, (b) explicit multimodal fusion evaluated with ablations on lecture content, and (c) an evaluation on **Hebrew** lecture video. VortexAI targets this intersection.
+**The gap.** Existing work explains *why* lowball-then-renegotiate behaviour happens, and existing platforms use either open bidding or fixed prices. We found no system that combines (a) AI-structured diagnosis, (b) contingent scenario-based quotes, (c) a verified change-of-scope protocol, and (d) a shrinkage-based reliability score used **inside the ranking**, together with a simulation and pilot that measure whether strategic lowballing stops paying.
 
 ---
 
 ## References
 
-[1] H. Yang and C. Meinel, "Content Based Lecture Video Retrieval Using Speech and Video Text Information," *IEEE Transactions on Learning Technologies*, vol. 7, no. 2, 2014. doi:10.1109/TLT.2014.2307305
+[1] G. A. Akerlof, "The Market for 'Lemons': Quality Uncertainty and the Market Mechanism," *Quarterly Journal of Economics*, vol. 84, no. 3, pp. 488–500, 1970.
 
-[2] H. Yang, M. Siebert, P. Lühne, H. Sack, and C. Meinel, "Lecture Video Indexing and Analysis Using Video OCR Technology," in *Proc. SITIS*, Dijon, France, 2011.
+[2] U. Dulleck and R. Kerschbamer, "On Doctors, Mechanics, and Computer Specialists: The Economics of Credence Goods," *Journal of Economic Literature*, vol. 44, no. 1, pp. 5–42, 2006. doi:10.1257/002205106776162717
 
-[3] H. Yang, F. Gruenewald, and C. Meinel, "Automated Extraction of Lecture Outlines from Lecture Videos — A Hybrid Solution for Lecture Video Indexing," in *Proc. CSEDU*, 2012. doi:10.5220/0003903700130022
+[3] L. Balafoutas, A. Beck, R. Kerschbamer, and M. Sutter, "What Drives Taxi Drivers? A Field Experiment on Fraud in a Market for Credence Goods," *Review of Economic Studies*, vol. 80, no. 3, pp. 876–891, 2013.
 
-[4] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, "Robust Speech Recognition via Large-Scale Weak Supervision," arXiv:2212.04356, 2022 (ICML 2023). https://github.com/openai/whisper
+[4] P. Bajari, S. Houghton, and S. Tadelis, "Bidding for Incomplete Contracts: An Empirical Analysis of Adaptation Costs," *American Economic Review*, vol. 104, no. 4, pp. 1288–1319, 2014. doi:10.1257/aer.104.4.1288
 
-[5] Y. Marmor, Y. Lifshitz, Y. Snapir, and K. Misgav, "Building an Accurate Open-Source Hebrew ASR System through Crowdsourcing," in *Proc. Interspeech*, 2025.
+[5] R. B. Myerson, "Optimal Auction Design," *Mathematics of Operations Research*, vol. 6, no. 1, pp. 58–73, 1981.
 
-[6] A. Radford et al., "Learning Transferable Visual Models From Natural Language Supervision," arXiv:2103.00020, 2021 (ICML 2021). https://github.com/openai/CLIP
+[6] Y.-K. Che, "Design Competition Through Multidimensional Auctions," *RAND Journal of Economics*, vol. 24, no. 4, pp. 668–680, 1993.
 
-[7] N. Reimers and I. Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," in *Proc. EMNLP-IJCNLP*, 2019, pp. 3982–3992. doi:10.18653/v1/D19-1410
+[7] P. Resnick, K. Kuwabara, R. Zeckhauser, and E. Friedman, "Reputation Systems," *Communications of the ACM*, vol. 43, no. 12, pp. 45–48, 2000.
 
-[8] J. Lei, L. Yu, T. L. Berg, and M. Bansal, "TVR: A Large-Scale Dataset for Video-Subtitle Moment Retrieval," in *Proc. ECCV*, 2020. doi:10.1007/978-3-030-58589-1_27
+[8] C. Dellarocas, "The Digitization of Word of Mouth: Promise and Challenges of Online Feedback Mechanisms," *Management Science*, vol. 49, no. 10, pp. 1407–1424, 2003.
 
-[9] J. Lei, T. L. Berg, and M. Bansal, "Detecting Moments and Highlights in Videos via Natural Language Queries," in *Proc. NeurIPS*, 2021. arXiv:2107.09609
+[9] S. Tadelis, "Reputation and Feedback Systems in Online Platform Markets," *Annual Review of Economics*, vol. 8, pp. 321–340, 2016.
 
-[10] D. W. Lee, C. Ahuja, P. P. Liang, S. Natu, and L.-P. Morency, "Lecture Presentations Multimodal Dataset: Towards Understanding Multimodality in Educational Videos," in *Proc. ICCV*, 2023, pp. 20087–20098. doi:10.1109/ICCV51070.2023.01838
+[10] B. Efron and C. Morris, "Data Analysis Using Stein's Estimator and Its Generalizations," *Journal of the American Statistical Association*, vol. 70, no. 350, pp. 311–319, 1975. doi:10.1080/01621459.1975.10479864
 
-[11] G. V. Cormack, C. L. A. Clarke, and S. Büttcher, "Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods," in *Proc. SIGIR*, 2009, pp. 758–759. doi:10.1145/1571941.1572114
+[11] G. Gu and F. Zhu, "Trust and Disintermediation: Evidence from an Online Freelance Marketplace," *Management Science*, vol. 67, no. 2, pp. 794–807, 2021. doi:10.1287/mnsc.2020.3583
+
+[12] Z. Ji et al., "Survey of Hallucination in Natural Language Generation," *ACM Computing Surveys*, vol. 55, no. 12, 2023.

@@ -1,83 +1,94 @@
-# VortexAI — Competitors Review
+# GetHandyMan — Competitors Review
 
 **Version:** 0.1 (draft) — November 2026
 
-This review surveys existing products that offer search *inside* video. They fall into three groups: (A) lecture-capture and education video platforms, (B) consumer video platforms with AI assistants, and (C) developer APIs for video understanding.
+We reviewed six players: four international home-services marketplaces, the main Israeli competitor, and the new category of "AI price-from-photo" apps. For each, we note what it does, how it prices, and **what we learned from it**.
 
 ---
 
-## A. Lecture-Capture / Education Video Platforms
+## 1. Homejoy (USA, closed 2015)
 
-### A1. Panopto (Smart Search)
-- **What it is:** A video platform widely used by universities for lecture capture and course video libraries.
-- **In-video search:** Panopto launched Smart Search in 2014. It indexes the presenter's speech with ASR and all text that appears in the video with OCR, plus slide content, captions, notes and comments. Results are timestamped, and clicking one starts playback at that point. Users can search a whole library or inside a single video.
-- **Strengths:** Mature, combines speech, on-screen text and slides, integrated with LMSs (Moodle, Canvas), and built for exactly our primary domain.
-- **Limitations:** Search is word/keyword-based rather than semantic. There is no search over *visual content* (objects, scenes, diagrams without text). It is a closed, institution-licensed product, so students cannot use it on arbitrary videos. Hebrew quality depends on the institution's ASR configuration.
+- **What it was:** An on-demand home-cleaning marketplace. It announced on July 17, 2015 that it would shut down on July 31, 2015.
+- **Why it failed:** Several factors. The founder named worker-classification lawsuits as the deciding factor. Investigative reporting added operational problems: for months a flaw in the **scheduling algorithm** booked back-to-back jobs for cleaners **without accounting for travel time**. A former employee also pointed to an expensive international expansion and to **leakage**: the best workers left for direct arrangements with Homejoy's own customers.
+- **What we learn:**
+  - Matching must model **travel time / distance** (we use PostGIS and route-aware matching).
+  - **Leakage is an existential risk.** Our fees are charged only on completed jobs and capped at ₪150, and the protection and change-of-scope arbitration exist only on-platform, so there is a reason to stay.
 
-### A2. Kaltura (REACH + MediaSpace)
-- **What it is:** A video platform for enterprise and education. REACH is its captioning and enrichment service suite.
-- **In-video search:** REACH provides human and machine captions, transcription, translation, chaptering, metadata and keyword extraction, plus in-video and cross-library search with deep-linking. A transcript plugin lets viewers search the transcript and jump to the point where a word was spoken. Kaltura's unified search also covers titles, tags, chapters, and slide text from its Personal Capture tool.
-- **Strengths:** Strong accessibility and captioning focus, with optional human-verified captions. Enterprise-grade.
-- **Limitations:** Search is centred on the transcript and metadata. There is no visual-content search. The full service requires an institutional contract, and credits are paid per job.
+## 2. TaskRabbit (USA, owned by IKEA)
 
-## B. Consumer Video Platforms with AI
+- **What it is:** A marketplace for errands and handyman tasks.
+- **History of the pricing model:** TaskRabbit started with an **auction / bidding** model, in which contractors bid on tasks posted by clients. In June–July 2014 it **abandoned bidding**. It cited a falling task-completion rate and inefficient matching of supply and demand, and replaced the auction with **fixed hourly rates** and algorithmic matching. The change caused a strong backlash among Taskers in the US.
+- **Fees today:** Clients pay a **service fee** on top of the Tasker's rate, which TaskRabbit **cut from 30% to 15% in 2018**, plus a separate **Trust & Support fee**. Both are percentages of the hourly rate.
+- **What we learn:** Open bidding failed partly because bids are hard to compare and match efficiently. Our answer is to keep competitive quotes but give the customer a **common reference point**: the AI diagnosis, the scenario tree, market ranges, and ranking by expected final price.
 
-### B1. YouTube — built-in transcript, "Ask", and Ask YouTube
-- **Built-in transcript:** Many YouTube videos expose an auto-generated transcript that the user can open and scan or search with the browser's Ctrl+F. This is keyword-only and speech-only.
-- **"Ask" (Gemini):** YouTube's Gemini-powered Ask feature lets viewers ask questions about the video they are watching: summarise it, explain parts, or jump to a relevant timestamp. It is available on mobile and desktop and is being tested on TV apps.
-- **Ask YouTube:** Announced at Google I/O 2026 (May 19, 2026). It is a conversational search across YouTube that returns a written answer plus clips that start at the relevant timestamp. It launched first for YouTube Premium subscribers in the US, with a broader rollout planned.
-- **Strengths:** Huge scale, a strong underlying model, and zero setup for the user.
-- **Limitations:** It works only on videos hosted on YouTube, so not on private lecture recordings, and availability varies by region and subscription. It is a closed system with no control over models or ranking, and no way to evaluate or tune it for a specific course. Hebrew and on-screen-text quality are not documented.
+## 3. Thumbtack (USA)
 
-## C. Developer APIs / Infrastructure
+- **What it is:** A local-services marketplace that is **pay-per-lead**: professionals pay to access or be matched with a lead, **whether or not the job is booked**.
+- **Pain points:** Large volumes of professional complaints about paying for leads that were fake, unresponsive or irrelevant, and about rising lead costs.
+- **What we learn:** Charging professionals for leads misaligns incentives. **We charge only on completed jobs**, which is a direct selling point when recruiting professionals.
 
-### C1. Twelve Labs (Marengo + Pegasus)
-- **What it is:** A video-understanding API company. **Marengo** is its multimodal embedding model and **Pegasus** its video-language generation model, exposed through Search, Analyze and Embed APIs.
-- **In-video search:** The Search API does multimodal retrieval across visual content, audio, dialogue and on-screen text, and returns timestamped, confidence-scored moments rather than whole videos. Marengo 3.0 (GA December 2025) supports videos up to four hours and 36 languages. A newer Marengo 3.5 has since been announced.
-- **Strengths:** State of the art, covers all modalities in one shared embedding space, and has a free tier for developers.
-- **Limitations:** A paid, closed, cloud-only service, and videos must be uploaded to a third party. It is a general-purpose building block, not an end-user product for students. Its ranking is not explainable, since we cannot see which modality produced a hit.
+## 4. Urban Company (India)
 
-### C2. VideoDB
-- **What it is:** A "video database" for AI applications, with Python and Node.js SDKs.
-- **In-video search:** It can index spoken words (automatic transcription, then semantic or keyword search) and index scenes (shot-based extraction with a vision model describing each scene), and returns matching segments ("shots") with timestamps. It integrates with LlamaIndex as a retriever.
-- **Strengths:** Developer-friendly, supports both spoken and visual indexing, and offers a free starter tier.
-- **Limitations:** Cloud service with usage-based pricing. Visual search relies on text descriptions generated per scene, so the quality depends on the prompt. There is no lecture-specific handling such as slide-transition detection or dedicated OCR.
+- **What it is:** India's largest on-demand home-services platform (beauty, cleaning, repairs, AC service), now also in several other countries.
+- **Pricing model:** **Hybrid.** Standardised services such as AC service and plumbing basics are sold at **fixed prices**, while non-standard work is handled separately without a fixed charge. The company also standardises professionals' behaviour (training, SOPs, background checks).
+- **What we learn:** Fixed prices work for standard jobs, and quotes are needed for complex ones. Our scenario tree is effectively a **generalisation of this hybrid**: the high-probability scenario behaves like a fixed-price menu item, and the rare, expensive scenarios are priced in advance instead of being renegotiated on site.
+
+## 5. Midrag (מידרג, Israel) — the local competitor
+
+- **What it is:** An Israeli directory of recommended professionals with about 12,000 professionals across 149 fields and about 3 million customer reviews.
+- **Ranking:** A list sorted by the **average score** from previous customers. A professional **cannot buy** their position, and to be listed they must reach an overall score of at least 9.
+- **Pricing information:** Midrag publishes price lists that are **averages of real jobs** done by its customers. It explicitly does **not** give final quotes, which can only be obtained from the professionals themselves.
+- **What we learn / gap:** Midrag has strong trust signals and general price ranges, but:
+  - no **case-specific** range derived from *this* fault's photo;
+  - no **contingent quote** structure;
+  - no protection against **on-site price changes**;
+  - ratings measure satisfaction, not **price reliability**.
+
+## 6. AI "Price-from-Photo" Apps
+
+- **What they are:** A new wave of consumer apps that diagnose a home problem from a photo and estimate the repair cost. Examples include **RepairValueAI** (diagnosis, severity, and a cost range split into DIY vs. professional), **FixIQ** (diagnosis, repair steps and cost estimates), and **Quote Buster** (an AI-generated local price range from a description).
+- **Gap:** These are **standalone estimators**. None of the ones we found integrates the estimate into a **real marketplace of competing quotes** or enforces it during the job. Their prices are also typically produced by the AI itself, which we deliberately avoid (see the literature review, §7).
 
 ---
 
 ## Comparison Matrix
 
-| Capability | Panopto | Kaltura REACH | YouTube Ask | Twelve Labs | VideoDB | **VortexAI (planned)** |
-|---|---|---|---|---|---|---|
-| Speech search | ✅ keyword | ✅ keyword | ✅ conversational | ✅ semantic | ✅ semantic + keyword | ✅ semantic + keyword |
-| On-screen text (OCR) | ✅ | ⚠️ slides from own capture tool | ❓ undocumented | ✅ | ❌ (via scene descriptions only) | ✅ dedicated, slide-aware |
-| Visual content search | ❌ | ❌ | ✅ | ✅ | ✅ (description-based) | ✅ (CLIP-style embeddings) |
-| Works on any user video | ❌ institution only | ❌ institution only | ❌ YouTube-hosted only | ✅ via API | ✅ via API | ✅ |
-| End-user UI for students | ✅ | ✅ | ✅ | ❌ (API) | ❌ (SDK) | ✅ |
-| Explainable results (which modality matched) | ✅ icons per source | Partial | ❌ | Partial (confidence) | Partial | ✅ |
-| Hebrew focus | ❓ | ❓ | ❓ | ⚠️ multilingual, not Hebrew-specific | ❓ | ✅ explicit goal |
-| Self-hostable / data stays local | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Open source | ❌ | ❌ | ❌ | ❌ | SDK only | ✅ |
-| Cost to student | Institutional | Institutional | Free/Premium | Paid API | Paid API | Free |
-
-✅ = supported ⚠️ = partial ❌ = not supported ❓ = not documented
+| Feature | Homejoy | TaskRabbit | Thumbtack | Urban Company | Midrag | AI photo apps | **GetHandyMan** |
+|---|---|---|---|---|---|---|---|
+| Competing quotes | ❌ | ❌ (dropped in 2014) | ✅ | Partial | Off-platform | ❌ | ✅ |
+| Fixed prices for standard jobs | ✅ | Hourly | ❌ | ✅ | ❌ | ❌ | ✅ (top scenario) |
+| AI diagnosis from photo | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Case-specific price range | ❌ | ❌ | ❌ | Fixed menu | General price list | ✅ (AI-generated) | ✅ (pricing engine) |
+| Contingent, pre-agreed scenarios | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Change-of-scope protocol | ❌ | ❌ | ❌ | Partial | ❌ | ❌ | ✅ AI-verified |
+| Ranking by price reliability | ❌ | ❌ | ❌ | ❌ | ❌ (by rating) | ❌ | ✅ (expected final price) |
+| Pro pays only on completed jobs | n/a | n/a (client fees) | ❌ (pay per lead) | Commission | Membership | n/a | ✅ |
 
 ---
 
-## Positioning: How VortexAI Differs
+## Positioning Summary
 
-1. **All three modalities in one open, self-hostable system.** Education platforms index speech and text but not visuals. API providers cover everything but are closed, paid, and cloud-only. VortexAI combines both sides and runs on the user's own machine or server.
-2. **Lecture-aware visual pipeline.** Slide-transition detection plus dedicated OCR for slides, whiteboards and code, with CLIP-style embeddings for non-textual visuals.
-3. **Transparent, evaluated fusion.** Each result shows *why* it matched (speech, screen text, visual, or several at once). We evaluate the fused ranking against single-modality baselines on our own annotated test set.
-4. **Hebrew as a first-class target.** Hebrew-tuned ASR and Hebrew OCR, with Hebrew results reported separately.
-5. **Works on any video the user has.** Private lecture recordings, downloaded course videos, or permitted online videos, with no dependency on a specific hosting platform.
+| Lesson | Source | How GetHandyMan applies it |
+|--------|--------|----------------------------|
+| Model travel time in matching | Homejoy | Geo + route-aware matching |
+| Prevent leakage | Homejoy, Gu & Zhu | Fees only on completed jobs, ₪150 cap, protection only on-platform |
+| Raw bids are hard to compare | TaskRabbit | AI reference point + ranking by expected final price |
+| Do not charge for leads | Thumbtack | Commission only on completed jobs |
+| Hybrid fixed + quote pricing works | Urban Company | Scenario tree combines both |
+| Trust signals matter; ranking must not be for sale | Midrag | Pro subscription never buys ranking position |
+| Price-from-photo exists but is not enforced | AI apps | Integrate the estimate into the marketplace and the job flow |
 
 ---
+
+## Note on the Business-Plan Comparison
+
+The business plan compares our ~13% take rate with a "20% commission" at TaskRabbit. TaskRabbit's current public pages describe a **client-side service fee plus a Trust & Support fee**, both percentages of the hourly rate, after the service fee was **cut from 30% to 15% in 2018**. We recommend rephrasing that comparison as "TaskRabbit charges clients a service fee plus a Trust & Support fee" unless a dated source for 20% is added.
 
 ## Sources
 
-- Panopto Smart Search: panopto.com product pages and blog; Campus Technology / THE Journal coverage (March 2014); university help pages (DMU, Cambridge, Waikato).
-- Kaltura REACH: corp.kaltura.com and knowledge.kaltura.com documentation; Kaltura Connect 2014 press release.
-- YouTube Ask / Ask YouTube: coverage by Tom's Guide, Android Authority, TechRadar (via Digital Today), and others (November 2025 – May 2026).
-- Twelve Labs: twelvelabs.io product pages, docs.twelvelabs.io, Amazon/AWS press release (December 1, 2025).
-- VideoDB: PyPI and npm package documentation, LlamaIndex integration docs.
+- Homejoy: Wikipedia; Fortune and Re/code coverage (July 2015); Backchannel / *Medium* investigation (Oct 2015); TechCrunch (July 2015).
+- TaskRabbit: TechCrunch (June 2014, Jan 2015); VentureBeat (July 2014); TaskRabbit press release (June 20, 2018); TaskRabbit support pages on Service and Trust & Support fees.
+- Thumbtack: Housecall Pro guide "What is Thumbtack"; Trustpilot, ConsumerAffairs, BBB and Thumbtack community complaints.
+- Urban Company: company website; Entrepreneur India; industry business-model analyses.
+- Midrag: midrag.co.il, the rating-method page, FAQ, and price-list page.
+- AI photo apps: Apple App Store listings (RepairValueAI, FixIQ, Quote Buster).
