@@ -7,7 +7,7 @@ Final project, B.Sc. Computer Science, Afeka College of Engineering (2026–2027
 | | |
 |---|---|
 | **Supervisor** | Dr. Yair Even-Zohar |
-| **Team** | Idan Lachovitz · Idan Pekler |
+| **Team** | Idan Lachovitz ([@IdanLachovitz](https://github.com/IdanLachovitz)) · Idan Pekler ([@idanpekler](https://github.com/idanpekler)) |
 | **Status** | Phase 1: definition, research & analysis |
 
 ---
@@ -25,8 +25,8 @@ A customer photographs a fault and describes it in text or a voice note. Nearby 
 | 3 | [Competitors Review](docs/03-competitors-review.md) | ✅ Draft v0.1 |
 | 4 | [Project Analysis](docs/04-project-analysis.md) | ✅ Draft v0.1 |
 | — | [Meeting Log](docs/meetings/README.md) | Ongoing |
-| — | Business Plan | ⏳ To be uploaded (`docs/business-plan/`) |
-| — | Clickable prototype (5 screens) | ⏳ Link to be added |
+| 5 | [Business Plan](docs/business-plan/business-plan.md) (Hebrew) | ✅ Draft v0.1 |
+| 6 | [Clickable Prototype — 5 screens](docs/prototype/README.md) | ✅ v0.1 (share link to be added) |
 
 ## How it works
 
@@ -56,11 +56,24 @@ GetHandyMan/
     ├── 02-literature-review.md
     ├── 03-competitors-review.md
     ├── 04-project-analysis.md
+    ├── business-plan/
+    │   └── business-plan.md
+    ├── prototype/
+    │   └── README.md
     └── meetings/
         └── README.md
 ```
 
 Source code (`app/`, `backend/`, `simulator/`) will be added from Phase 3 onward.
+
+## Team
+
+GetHandyMan is a joint project, created and owned equally by both team members:
+
+| Member | GitHub |
+|--------|--------|
+| Idan Lachovitz | [@IdanLachovitz](https://github.com/IdanLachovitz) |
+| Idan Pekler | [@idanpekler](https://github.com/idanpekler) |
 
 ## Project management
 
