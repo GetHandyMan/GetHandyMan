@@ -1,6 +1,6 @@
 # GetHandyMan — Clickable Prototype (5 screens)
 
-**Team:** Idan Lachovitz, Idan Pekler · November 2026
+**Team:** Idan Lachovitz, Idan Pekler, Shai Aharon · November 2026
 
 A clickable, Hebrew (RTL) mobile prototype at 390×844 that walks through the full flow, from photo to fair final price. The screens are linked, and the key controls work: sort toggles, quote selection, the customer's decision buttons, and live price inputs on the professional's side.
 

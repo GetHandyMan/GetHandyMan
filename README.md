@@ -7,7 +7,7 @@ Final project, B.Sc. Computer Science, Afeka College of Engineering (2026–2027
 | | |
 |---|---|
 | **Supervisor** | Dr. Yair Even-Zohar |
-| **Team** | Idan Lachovitz ([@IdanLachovitz](https://github.com/IdanLachovitz)) · Idan Pekler ([@idanpekler](https://github.com/idanpekler)) |
+| **Team** | Idan Lachovitz ([@IdanLachovitz](https://github.com/IdanLachovitz)) · Idan Pekler ([@idanpekler](https://github.com/idanpekler)) · Shai Aharon |
 | **Status** | Phase 1: definition, research & analysis |
 
 ---
@@ -68,12 +68,13 @@ Source code (`app/`, `backend/`, `simulator/`) will be added from Phase 3 onward
 
 ## Team
 
-GetHandyMan is a joint project, created and owned equally by both team members:
+GetHandyMan is a joint project, created and owned equally by all three team members:
 
 | Member | GitHub |
 |--------|--------|
 | Idan Lachovitz | [@IdanLachovitz](https://github.com/IdanLachovitz) |
 | Idan Pekler | [@idanpekler](https://github.com/idanpekler) |
+| Shai Aharon | — |
 
 ## Project management
 

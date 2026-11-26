@@ -1,7 +1,7 @@
 # GetHandyMan — Project Analysis
 
 **Version:** 0.1 (draft) — November 2026
-**Team:** Idan Lachovitz, Idan Pekler
+**Team:** Idan Lachovitz, Idan Pekler, Shai Aharon
 **Supervisor:** Dr. Yair Even-Zohar
 
 This document turns the [Project Definition](01-project-definition.md) into an engineering analysis: actors and use cases, requirements, architecture, data model, the core algorithms with their formulas, the evaluation plan, the risks, and the project plan.
